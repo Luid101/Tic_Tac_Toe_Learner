@@ -202,7 +202,7 @@ class AI:
         """
         s = ""
         for board_key in self.game_boards_memory:
-            s += (str(board_key) + "\n" + str(self.game_boards_memory[board_key]) + "\n")\
+            s += (str(board_key) + "\n" + str(self.game_boards_memory[board_key]) + "\n")
         return s
 
 def generate_next(board):
