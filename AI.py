@@ -152,12 +152,10 @@ class AI:
         # after the loop,
         # now clear out the list of boards for the current game
         self.game_boards_current = []
-
-        s = "Learned " + str(added) + " new boards, And changed how I look at " + str(changed) + " boards\n"
+        s = "Moves learned: " + str(added) + ", Moves modified: " + str(changed)
 
         # save stuff that is remembered into a my
         self.save()
-
         return s
 
     def save(self):
@@ -205,11 +203,7 @@ class AI:
         s = ""
         for board_key in self.game_boards_memory:
             s += (str(board_key) + "\n" + str(self.game_boards_memory[board_key]) + "\n")\
-
         return s
-
-
-
 
 def generate_next(board):
     """
