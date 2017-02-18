@@ -36,9 +36,9 @@ class Board:
     def user_turn(self):
         self.generate_board()
         if self.x_turn:
-            user_input = input("PLAYER X, GIVE YOUR DESIRED POSITION: ").strip()
+            user_input = input("PLAYER X, GIVE YOUR DESIRED POSITION(eg. 1,1): ").strip()
         elif not self.x_turn:
-            user_input = input("PLAYER O, GIVE YOU DESIRED POSITION: ").strip()
+            user_input = input("PLAYER O, GIVE YOU DESIRED POSITION(eg. 1,1): ").strip()
         if (len(user_input) == 3) and (user_input[1] == ',') and (user_input[0] in '123') \
             and (user_input[2] in '123'):
             x = int(user_input[0])

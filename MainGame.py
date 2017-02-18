@@ -1,8 +1,5 @@
 from Board import *
 
-
-
-
 board = Board()
 
 if __name__ == '__main__':
