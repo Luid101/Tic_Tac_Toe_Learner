@@ -1,4 +1,5 @@
 import random
+import os.path
 
 class AI:
     def __init__(self):
@@ -13,6 +14,11 @@ class AI:
         """
         self.game_boards_current = []
         self.game_boards_memory = dict()    # have this initialize from a file soon
+        self.file_name = "memory.txt"
+
+        # check if the file exists
+        if os.path.isfile(self.file_name):
+            self.load()
 
     def move(self, board):
         """
@@ -148,7 +154,61 @@ class AI:
         self.game_boards_current = []
 
         s = "Learned " + str(added) + " new boards, And changed how I look at " + str(changed) + " boards\n"
+
+        # save stuff that is remembered into a my
+        self.save()
+
         return s
+
+    def save(self):
+        """
+        Save the contents of the database into a file.
+
+        :param file_name: str
+        :return: number of entries saved
+        """
+        file_name = self.file_name
+        entries = 0
+        target_file = open(file_name, 'w')
+
+        for key in self.game_boards_memory:
+            target_file.write(str(key) + ":" + str(self.game_boards_memory[key]) + "\n")
+            entries += 1
+
+        target_file.close()
+
+    def load(self):
+        """
+        Load the contents of a file into its database (dict)
+
+        :param file_name: str
+        :return: number of entries loaded
+        """
+        file_name = self.file_name
+        entries = 0
+
+        target_file = open(file_name, 'r')
+
+        for line in target_file:
+            temp_list = line.strip("\n").split(":")
+            if len(temp_list) == 2:
+                self.game_boards_memory[temp_list[0]] = int(temp_list[1])
+                entries += 1
+
+        return entries
+
+    def get_memory(self):
+        """
+        Return a string representation of the ai's memory
+        :return:
+        """
+        s = ""
+        for board_key in self.game_boards_memory:
+            s += (str(board_key) + "\n" + str(self.game_boards_memory[board_key]) + "\n")\
+
+        return s
+
+
 
 
 def generate_next(board):
@@ -242,3 +302,7 @@ def show_board(board):
         if (((i+1) % 3) == 0) and (i != 0):
             s += "\n"
     return s
+
+
+
+
