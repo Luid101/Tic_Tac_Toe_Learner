@@ -147,7 +147,7 @@ class AI:
         # now clear out the list of boards for the current game
         self.game_boards_current = []
 
-        s = "Learned " + str(added) + " new boards, And changed how I look at " + str(changed) + " boards\n"
+        s = "Moves learned: " + str(added) + ", Moves modified: " + str(changed)
         return s
 
 
