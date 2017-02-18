@@ -1,10 +1,11 @@
-import pygame, pygame.
+import pygame
 
-if __name__ == "main":
+if __name__ == "__main__":
     pygame.init()
-    display = pygame.display.set_mode((800, 600))
+    game_display = pygame.display.set_mode((800,600))
     pygame.display.set_caption("Thicc Tac Toe")
     clock = pygame.time.Clock()
+
     crashed = False
 
     while not crashed:
