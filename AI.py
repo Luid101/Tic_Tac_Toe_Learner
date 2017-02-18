@@ -100,10 +100,10 @@ class AI:
 
         test that this code works
         >>> ai = AI()
-        >>> board = [0,1,0]
+        >>> board = [0,1,0,0]
         >>> 0 <= ai.move(board) <= len(board)
         True
-        >>> board2 = [0,0,1]
+        >>> board2 = [0,0,1,0]
         >>> 0 <= ai.move(board2) <= len(board2)
         True
         >>> print(ai.has_won())
@@ -113,6 +113,17 @@ class AI:
         >>> for board in ai.game_boards_memory: s += ai.game_boards_memory[board]
         >>> s
         1
+        >>> board3 = [1,0,0,0]
+        >>> 0 <= ai.move(board3) <= len(board3)
+        True
+        >>> board4 = [1,2,0,0]
+        >>> board4_lost = ai.move(board4)
+        >>> print(ai.has_lost())
+        Learned 2 new boards, And changed how I look at 0 boards
+        <BLANKLINE>
+        >>> new_board = ai.move(board4)
+        >>> str(new_board) == str(board4_lost)
+        False
         """
         # info data about what the computer is learning
         changed = 0
