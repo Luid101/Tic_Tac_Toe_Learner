@@ -53,8 +53,8 @@ class AI:
 
         # figure out the best move
         # get a random index
-        index = random.randint(0, len(next_moves_list)-1)
-        best_move = next_moves_list[index]
+        #index = random.randint(0, len(next_moves_list)-1)
+        best_move = next_moves_list[0]
 
         for next_move in next_moves_list:
             # if the next move is better, it replaces the best move

@@ -93,19 +93,19 @@ class TicTacToe:
                 self._game_array[(450, 450)] = self.SYMBOLS[self._player_num]
                 self._turn += 1  # Next turn
 
-        elif 650 <= mouse_coords[0] <= 1000:
+    def reset(self, mouse_coords):
+        if 650 <= mouse_coords[0] <= 1000:
             # Reset
-            if 550 <= mouse_coords[1] <= 650:
-                self.reset()
-
-    def reset(self):
-        self._turn = 0
-        self._won = False
-        self._current_win_state = False
-        self._previous_win_state = False
-        self._player_num, self._ai_num = self._ai_num, self._player_num
-        for coords in self._game_array:
-            self._game_array[coords] = '-'
+            if '-' not in self._game_array.values():
+                self._ai.has_won()
+            if 550 <= mouse_coords[1] <= 650:     
+                self._turn = 0
+                self._won = False
+                self._current_win_state = False
+                self._previous_win_state = False
+                self._player_num, self._ai_num = self._ai_num, self._player_num
+                for coords in self._game_array:
+                    self._game_array[coords] = '-'
 
     def draw_board(self, game_display):
         # Draws the board
@@ -198,9 +198,11 @@ class TicTacToe:
             # Replace the symbols in the array with symbols that can be read by
             # the AI
             sym = 0
-            if (current_board[i] == 'x'):
+            if (current_board[i] == 'x' and self._player_num == 0) or \
+                (current_board[i] == 'o' and self._player_num == 1):
                 sym = 1
-            elif (current_board[i] == 'o'):
+            elif (current_board[i] == 'x' and self._ai_num == 0) or \
+                (current_board[i] == 'o' and self._ai_num == 1):
                 sym = 2
             current_board[i] = sym
 
@@ -227,8 +229,9 @@ class TicTacToe:
                 elif not self._won and self._turn < 9 \
                     and self._turn % 2 == self._ai_num:
                     self.ai_input()
-                elif event.type == pygame.MOUSEBUTTONDOWN and self._won:
-                    self.process_click(pygame.mouse.get_pos())
+                elif event.type == pygame.MOUSEBUTTONDOWN and (self._turn > 8
+                                                               or self._won):
+                    self.reset(pygame.mouse.get_pos())
 
             self.draw_board(self._game_display)
             pygame.display.update()
