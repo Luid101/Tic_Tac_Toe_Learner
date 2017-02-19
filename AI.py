@@ -10,6 +10,11 @@ class AI:
         2) the ai's internal memory that
             stores all boards its seen
             in a dictionary.
+
+        * bugs:
+            1) have it account for losses
+            2) have it be able to play itself
+            3)
         :return:
         """
         self.game_boards_current = []
