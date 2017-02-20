@@ -262,7 +262,7 @@ class Player:
         implemented)
         :return: None
         """
-        pass
+        self._ai_message = self._ai.has_drawn() if self._mode == 1 else None
 
     def lost(self):
         """
