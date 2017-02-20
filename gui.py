@@ -97,7 +97,7 @@ class TicTacToe:
         if 650 <= mouse_coords[0] <= 1000:
             # Reset
             if '-' not in self._game_array.values():
-                self._ai.has_won()
+                self._ai.has_drawn()
             if 550 <= mouse_coords[1] <= 650:     
                 self._turn = 0
                 self._won = False

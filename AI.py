@@ -21,12 +21,9 @@ class AI:
         self.game_boards_memory = dict()    # have this initialize from a file soon
         self.file_name = "memory.txt"
 
-        """
-        Disable load
         # check if the file exists
         if os.path.isfile(self.file_name):
             self.load()
-        """
 
     def move(self, board):
         """
@@ -179,10 +176,9 @@ class AI:
         s = "Moves learned: " + str(added) + ", Moves modified: " + str(changed)
 
         # save stuff that is remembered into a my memory
-        """
-        Disable save
+
         self.save()
-        """
+
         return s
 
     def save(self):
@@ -197,8 +193,11 @@ class AI:
         target_file = open(file_name, 'w')
 
         for key in self.game_boards_memory:
-            target_file.write(str(key) + ":" + str(self.game_boards_memory[key]) + "\n")
-            entries += 1
+            target_file.write(str(key) + ":")
+            for next_board_key in self.game_boards_memory[key]:
+                target_file.write(str(next_board_key) + "%" + str(self.game_boards_memory[key][next_board_key]) + ";")
+            target_file.write("\n")
+            # entries += 1
 
         target_file.close()
 
@@ -215,10 +214,14 @@ class AI:
         target_file = open(file_name, 'r')
 
         for line in target_file:
-            temp_list = line.strip("\n").split(":")
+            temp_list = line.strip("\n").strip(";").split(":")
             if len(temp_list) == 2:
-                self.game_boards_memory[temp_list[0]] = int(temp_list[1])
-                entries += 1
+                self.game_boards_memory[temp_list[0]] = dict()
+                next_list = temp_list[1].split(";")
+                for element in next_list:
+                    element_list = element.split("%")
+                    self.game_boards_memory[temp_list[0]][element_list[0]] = int(element_list[1])
+                    entries += 1
 
         return entries
 
@@ -323,6 +326,27 @@ def show_board(board):
         if (((i+1) % 3) == 0) and (i != 0):
             s += "\n"
     return s
+
+# if __name__ == "__main__":
+#     # test out save
+#     # ai = AI()
+#     # ai.load()
+#     #
+#     # board1 = [0, 0, 0, 0, 1, 2, 0, 0, 0]
+#     # ai.move(board1)
+#     #
+#     # board1 = [0, 2, 0, 0, 1, 0, 0, 0, 0]
+#     # ai.move(board1)
+#     #
+#     # board1 = [0, 2, 0, 0, 1, 0, 0, 0, 0]
+#     # ai.move(board1)
+#     #
+#     # board1 = [0, 2, 0, 0, 1, 1, 1, 0, 0]
+#     # ai.move(board1)
+#     # ai.has_won()
+#     # ai.save()
+#     #
+#     # print(ai.game_boards_memory)
 
 
 
