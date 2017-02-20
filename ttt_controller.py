@@ -4,6 +4,7 @@ class TicTacToeController:
     :ivar _board[char]: An array representation of the board
     :ivar _done: A boolean that represents the game's state
     :ivar _player_order[Player]: Tic tac toe players in order of who goes first
+    :ivar _win: A boolean that represents whether a player has won or not
     :ivar _turns: An integer representing the number of turns
     """
     def __init__(self, player1, player2):
@@ -20,6 +21,7 @@ class TicTacToeController:
         self._player_order = [self._player1, self._player2]  # Arranged in order
         # of who goes first.
         self._done = False
+        self._win = False
         self._turns = 0
 
     def get_board(self):
@@ -39,6 +41,18 @@ class TicTacToeController:
         :return: True if the game is done, False otherwise
         """
         return self._done
+
+    def get_is_tie(self):
+        """
+        :return: True if the game is a tie, False otherwise
+        """
+        return self.get_is_done() and not self.get_is_win()
+
+    def get_is_win(self):
+        """
+        :return: True if a player won, False otherwise
+        """
+        return self._win
 
     def get_player1(self):
         """
@@ -68,8 +82,8 @@ class TicTacToeController:
         """
         :return: The winner of the game
         """
-        return self._player_order[(self._turns - 1) % 2]  # Number of turns gets
-        # incremented before checking the winner
+        return self._player_order[(self._turns - 1) % 2] if self._win else None
+        # Number of turns gets incremented before checking the winner
 
     def convert_board(self, board):
         """
@@ -97,21 +111,16 @@ class TicTacToeController:
         :param index: Position on the board where to make a move
         :return: None
         """
-        print("5")
         player_turn = self._turns % 2  # Determines who plays this turn
         if not self._done:
-            print("2")
             if self._player_order[player_turn].get_mode() == 0:  # Human
-                print("human")
                 # x if first one to go, o if second one to go
                 if self._board[index] == '-':
-                    print("replace")
                     # Replace with x/o if there's an empty spot at board[index]
                     self._board[index] = 'x' if player_turn == 0 else 'o'
                     self._turns += 1
 
             elif self._player_order[player_turn].get_mode() == 1:  # AI
-                print("ai")
                 # x if first one to go, o if second one to go
                 ai_move = self._player_order[player_turn].get_ai_move(
                     self.convert_board(self._board))  # Gets the AI's next move
@@ -128,6 +137,7 @@ class TicTacToeController:
         """
         if self._done:
             self._done = False
+            self._win = False
             self._turns = 0
             self._player_order[0], self._player_order[1] = \
                 self._player_order[1], self._player_order[0]  # Switch the order
@@ -170,6 +180,7 @@ class TicTacToeController:
         if winner:
             # A player won
             self._done = True
+            self._win = True
             if self._turns % 2 == 1:
                 # Turns get incremented before checking for the winner, so if
                 # the turn is an odd number, then the first player won
@@ -187,6 +198,7 @@ class Player:
     """
     A tic tac toe player
     :ivar _ai: AI engine if _mode == 1
+    :ivar _ai_message: Message from the AI
     :ivar _mode: 0 for human, 1 for AI
     :ivar _name: Name
     :ivar _num: Player number, nothing to do with order
@@ -205,6 +217,7 @@ class Player:
         self._num = num
         self._score = 0
         self._ai = ai if self._mode == 1 else None
+        self._ai_message = None
 
     def get_ai_move(self, board):
         """
@@ -212,6 +225,12 @@ class Player:
         :return: Integer where the AI wants to make a move
         """
         return self._ai.move(board) if self._mode == 1 else None
+
+    def get_ai_message(self):
+        """
+        :return: Message from AI
+        """
+        return self._ai_message
 
     def get_mode(self):
         """
@@ -239,25 +258,24 @@ class Player:
 
     def draw(self):
         """
-        If the player is an AI, it runs the AI learning algorithm and returns a
-        message. (To be implemented)
-        :return: A message from the AI
+        If the player is an AI, it runs the AI learning algorithm. (To be
+        implemented)
+        :return: None
         """
         pass
 
     def lost(self):
         """
-        If the player is an AI, it runs the AI learning algorithm and returns a
-        message.
-        :return: A message from the AI
+        If the player is an AI, it runs the AI learning algorithm.
+        :return: None
         """
-        return self._ai.has_lost() if self._mode == 1 else None
+        self._ai_message = self._ai.has_lost() if self._mode == 1 else None
 
     def won(self):
         """
         Increments the player's score by 1. If the player is an AI, it runs the
-        AI learning algorithm and returns a message.
+        AI learning algorithm.
         :return: A message from the AI
         """
         self._score += 1
-        return self._ai.has_won() if self._mode == 1 else None
+        self._ai_message = self._ai.has_won() if self._mode == 1 else None
