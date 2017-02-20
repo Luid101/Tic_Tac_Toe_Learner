@@ -16,9 +16,12 @@ class AI:
         self.game_boards_memory = dict()    # have this initialize from a file soon
         self.file_name = "memory.txt"
 
+        """
+        Disable load
         # check if the file exists
         if os.path.isfile(self.file_name):
             self.load()
+        """
 
     def move(self, board):
         """
@@ -29,71 +32,87 @@ class AI:
         :return: int
 
         >>> ai = AI()
-        >>> board = [0, 0, 0, 0, 1, 0, 0, 0, 0]
-        >>> index = ai.move(board)
-        >>> print(index)
-        0
+        >>> prev_board = [0, 0, 0, 0, 1, 0, 0, 0, 0]
+        >>> index = ai.move(prev_board)
+        >>> next_board = prev_board[:]
+        >>> next_board[index] = 2
         >>> len(ai.game_boards_current)
         1
         >>> board_better = [0, 2, 0, 0, 1, 0, 0, 0, 0]
         >>> board_better_key = str(board_better)
-        >>> ai.game_boards_memory[board_better_key] = 5
-        >>> index = ai.move(board)
-        >>> print(index)
-        1
+        >>> ai.game_boards_memory[str(prev_board)] = dict()
+        >>> ai.game_boards_memory[str(prev_board)][str(next_board)] = 5
+        >>> index2 = ai.move(prev_board)
+        >>> index2 == index
+        True
         """
+        # set previous board
+        prev_board = board
 
         # generate all possible next moves
         next_moves_list = generate_next(board)
 
         # figure out the best move
         # get a random index
-        index = random.randint(0, len(next_moves_list)-1)
-        best_move = next_moves_list[index]
+        # index = random.randint(0, len(next_moves_list)-1)
+        best_move = next_moves_list[0]
 
         for next_move in next_moves_list:
             # if the next move is better, it replaces the best move
-            if self.get_board_value(best_move[1]) < self.get_board_value(next_move[1]):
+            if self.get_board_value(prev_board, best_move[1]) < self.get_board_value(prev_board, next_move[1]):
                 best_move = next_move
 
         # add the next move that we are going to make to a list of all boards seen so far
         # the game_boards current.
-        self.game_boards_current.append(best_move[1])
+        self.game_boards_current.append([prev_board, best_move[1]])
 
         # return the index of where to play the next move
         return best_move[0]
 
-    def get_board_value(self, board):
+    def get_board_value(self, prev_board, next_board):
         """
-        returns the value of that board in the computers memory.
+        returns the value of that board (in-relation to the previous board) in the computers memory.
 
-        board:  a list of 9 spaces that signals a game board.
-        :param board: list[]
+        prev_board:  a list of 9 spaces that signals a game board.
+        next_board:  a list of 9 spaces that signals a game board.
+        :param prev_board: list[]
+        :param next_board: list[]
         :return: int
 
         >>> ai = AI()
-        >>> board = [0,0,0]
-        >>> board_key = str(board)
-        >>> ai.get_board_value(board_key)
+        >>> prev_board = [0,0,0]
+        >>> next_board = [0,0,1]
+        >>> prev_board_key = str(prev_board)
+        >>> next_board_key = str(next_board)
+        >>> ai.get_board_value(prev_board_key,next_board_key)
         0
-        >>> ai.game_boards_memory[board_key] = 5
-        >>> ai.get_board_value(board_key)
+        >>> ai.game_boards_memory[prev_board_key]= dict()
+        >>> ai.game_boards_memory[prev_board_key][next_board_key] = 5
+        >>> ai.get_board_value(prev_board_key,next_board_key)
         5
         """
         # use string representation as the key of the dictionary
-        board_key = str(board)
-        if board_key in self.game_boards_memory:
-            value = self.game_boards_memory.get(board_key)
+        # access the next board's value from inside the index of the previous board
+        prev_board_key = str(prev_board)
+        next_board_key = str(next_board)
+        if prev_board_key in self.game_boards_memory:
+            if next_board_key in self.game_boards_memory[prev_board_key]:
+                value = self.game_boards_memory[prev_board_key][next_board_key]
+            else:
+                value = 0
         else:
             value = 0
 
         return value
 
     def has_lost(self):
-        return self.remember_boards(-1)
+        return self.remember_boards(-2)
+
+    def has_drawn(self):
+        return self.remember_boards(1)
 
     def has_won(self):
-        return self.remember_boards(1)
+        return self.remember_boards(2)
 
     def remember_boards(self, multiplier):
         """
@@ -106,47 +125,47 @@ class AI:
 
         test that this code works
         >>> ai = AI()
-        >>> board = [0,1,0,0]
-        >>> 0 <= ai.move(board) <= len(board)
+        >>> prev_board = [0,1,0,0]
+        >>> index = ai.move(prev_board)
+        >>> next_board = prev_board[:]
+        >>> next_board[index] = 2
+        >>> index2 = ai.move(next_board)
+        >>> next_board2 = next_board[:]
+        >>> ai.has_lost()
+        'Moves learned: 2, Moves modified: 0'
+        >>> next_index = ai.move(next_board)
+        >>> index2 != next_index
         True
-        >>> board2 = [0,0,1,0]
-        >>> 0 <= ai.move(board2) <= len(board2)
-        True
-        >>> print(ai.has_won())
-        Learned 2 new boards, And changed how I look at 0 boards
-        <BLANKLINE>
-        >>> s = 0
-        >>> for board in ai.game_boards_memory: s += ai.game_boards_memory[board]
-        >>> s
-        1
-        >>> board3 = [1,0,0,0]
-        >>> 0 <= ai.move(board3) <= len(board3)
-        True
-        >>> board4 = [1,2,0,0]
-        >>> board4_lost = ai.move(board4)
-        >>> print(ai.has_lost())
-        Learned 2 new boards, And changed how I look at 0 boards
-        <BLANKLINE>
-        >>> new_board = ai.move(board4)
-        >>> str(new_board) == str(board4_lost)
-        False
+        >>> print ai.game_boards_memory
+        {'[0, 1, 0, 0]': {'[2, 1, 0, 0]': -2}, '[2, 1, 0, 0]': {'[2, 1, 2, 0]': -4}}
         """
         # info data about what the computer is learning
         changed = 0
         added = 0
 
-        for board in self.game_boards_current:
-            value = multiplier * self.game_boards_current.index(board)
+        for boards in self.game_boards_current:
+            value = multiplier * (self.game_boards_current.index(boards) + 1)
 
             # check if that item is in the dictionary.
-            # if it is, add value to it,
+            # if it is, , add value to it,
             # if not, create a new key with the board and make it point to value.
-            board_key = str(board)
-            if board_key in self.game_boards_memory:
-                self.game_boards_memory[board_key] += value
-                changed += 1
+            prev_board_key = str(boards[0])
+            next_board_key = str(boards[1])
+
+            # check if prev_board_key exists in memory
+            if prev_board_key in self.game_boards_memory:
+                # check if the value of next_board is in the dictionary
+                if next_board_key in self.game_boards_memory[prev_board_key]:
+                    self.game_boards_memory[prev_board_key][next_board_key] += value
+                    changed += 1
+                # if the value of next_board_key is not in the dictionary, then add it in.
+                else:
+                    self.game_boards_memory[prev_board_key][next_board_key] = value
+                    added += 1
+            # if prev_board_key deos not exist in memory, then create it and attach a new connection to next_board_key
             else:
-                self.game_boards_memory[board_key] = value
+                self.game_boards_memory[prev_board_key] = dict()
+                self.game_boards_memory[prev_board_key][next_board_key] = value
                 added += 1
 
         # after the loop,
@@ -154,8 +173,11 @@ class AI:
         self.game_boards_current = []
         s = "Moves learned: " + str(added) + ", Moves modified: " + str(changed)
 
-        # save stuff that is remembered into a my
+        # save stuff that is remembered into a my memory
+        """
+        Disable save
         self.save()
+        """
         return s
 
     def save(self):
