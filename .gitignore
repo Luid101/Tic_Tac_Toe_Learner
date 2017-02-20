@@ -1,4 +1,5 @@
-.idea/workspace.xml
 *.txt
 /.idea
 /__pycache__
+.idea/
+*.db
