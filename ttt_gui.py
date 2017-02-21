@@ -21,10 +21,10 @@ class TicTacToeGUI:
         :return: None
         """
         self._controller = controller
+        self._found_result = False
         pygame.init()
         pygame.display.set_caption(window_name)
         self._clock = pygame.time.Clock()
-        self._found_result = False
         self._display = pygame.display.set_mode((1000, 650))
         self._x_image = pygame.image.load("images/x.png")
         self._o_image = pygame.image.load("images/o.png")
@@ -50,26 +50,31 @@ class TicTacToeGUI:
         :return: None
         """
         if self._controller.get_is_done() and self._found_result:
+            game_over_message = None
             if self._controller.get_is_win():
                 # Displays winner
                 winner = self._controller.get_winner()
-                winner_label = pygame.font.SysFont("monospace", 15).\
+                game_over_message = pygame.font.SysFont("monospace", 15).\
                     render(winner.get_name() + " won!", 1, (0, 0, 0))
-                self._display.blit(winner_label, (665, 400))
+            elif self._controller.get_is_tie():
+                game_over_message = pygame.font.SysFont("monospace", 15).\
+                    render("Game ended in a tie", 1, (0, 0, 0))
 
-                # Displays message from player 1 if player 1 is an AI
-                if self._controller.get_player1().get_mode() == 1:
-                    p1_message = pygame.font.SysFont("monospace", 15).\
-                        render(self._controller.get_player1()
-                               .get_ai_message(), 1, (0, 0, 0))
-                    self._display.blit(p1_message, (665, 425))
+            self._display.blit(game_over_message, (665, 400))
 
-                # Displays message from player 2 if player 2 is an AI
-                if self._controller.get_player2().get_mode() == 1:
-                    p2_message = pygame.font.SysFont("monospace", 15).\
-                        render(self._controller.get_player2()
-                               .get_ai_message(), 1, (0, 0, 0))
-                    self._display.blit(p2_message, (665, 450))
+            # Displays message from player 1 if player 1 is an AI
+            if self._controller.get_player1().get_mode() == 1:
+                p1_message = pygame.font.SysFont("monospace", 15).\
+                    render(self._controller.get_player1()
+                           .get_ai_message(), 1, (0, 0, 0))
+                self._display.blit(p1_message, (665, 425))
+
+            # Displays message from player 2 if player 2 is an AI
+            if self._controller.get_player2().get_mode() == 1:
+                p2_message = pygame.font.SysFont("monospace", 15).\
+                    render(self._controller.get_player2()
+                           .get_ai_message(), 1, (0, 0, 0))
+                self._display.blit(p2_message, (665, 450))
 
     def draw_grid(self):
         """
@@ -157,9 +162,7 @@ class TicTacToeGUI:
         if human_input and not done:
             # Human input
             if x in range(0, 201):  # First column
-                print("Test")
                 if y in range(0, 201):  # First row
-                    print("Hi")
                     self._controller.move(0)
                 elif y in range(225, 426):  # Second row
                     self._controller.move(3)
@@ -223,8 +226,10 @@ class TicTacToeGUI:
             pygame.display.update()
             if not self._found_result:
                 # Prevents from checking whether a player won or game ended in
-                # a tie because game runs in a loop.
-                if self._controller.win() or self._controller.tie():
+                # a tie multiple times because game runs in a loop.
+                self._controller.set_game_over()
+                if self._controller.get_is_win() or \
+                        self._controller.get_is_tie():
                     self._found_result = True
             self._clock.tick(60)
 
