@@ -207,4 +207,4 @@ if __name__ == "__main__":
     # train for 1 hour
     # train_for(3600)
     # train for 30 minutes
-    train(1)
+    train(5000)

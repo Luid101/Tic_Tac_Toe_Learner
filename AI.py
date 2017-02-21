@@ -90,10 +90,13 @@ class AI:
         return value
 
     def has_lost(self):
-        return self.remember_boards(-1)
+        return self.remember_boards(-2)
+
+    def has_drawn(self):
+        return self.remember_boards(1)
 
     def has_won(self):
-        return self.remember_boards(1)
+        return self.remember_boards(2)
 
     def remember_boards(self, multiplier):
         """
