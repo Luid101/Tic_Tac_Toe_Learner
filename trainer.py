@@ -204,5 +204,7 @@ def game_over(board):
 # test out trainer
 if __name__ == "__main__":
     # train(1)
-    # train for 10 min
-    train_for(600)
+    # train for 1 hour
+    # train_for(3600)
+    # train for 30 minutes
+    train_for(25200)
