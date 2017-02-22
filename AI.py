@@ -19,7 +19,7 @@ class AI:
         """
         self.game_boards_current = []
         self.game_boards_memory = dict()    # have this initialize from a file soon
-        self.file_name = "memory.txt"
+        self.file_name = "memory_v2.txt"
 
         # check if the file exists
         if os.path.isfile(self.file_name):
