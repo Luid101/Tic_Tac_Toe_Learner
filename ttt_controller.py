@@ -144,43 +144,30 @@ class TicTacToeController:
             # of the two players
             self._board = ['-' for symbol in self._board]
 
-    def tie(self):
+    def set_game_over(self):
         """
-        Determines if the game is a tie or not
-        :return: True if the game is a tie, False otherwise
+        Sets the value of self._win and self._done to True if there is a winner.
+        If it's a tie, only self._done gets set to True. Otherwise, do nothing.
+        :return: None
         """
-        draw = '-' not in self._board and self._turns > 8
-        if draw:
-            self._done = True
-            for player in self._player_order:
-                player.draw()
-        return draw
-
-    def win(self):
-        """
-        Finds a winning row, column, or diagonal
-        :return: True if there's a winner, False otherwise
-        """
-        winner = False
         win_positions = [[self._board[0], self._board[1], self._board[2]],
-            [self._board[3], self._board[4], self._board[5]],
-            [self._board[6], self._board[7], self._board[8]],
-            [self._board[0], self._board[3], self._board[6]],
-            [self._board[1], self._board[4], self._board[7]],
-            [self._board[2], self._board[5], self._board[8]],
-            [self._board[0], self._board[4], self._board[8]],
-            [self._board[2], self._board[4], self._board[6]]]
+                         [self._board[3], self._board[4], self._board[5]],
+                         [self._board[6], self._board[7], self._board[8]],
+                         [self._board[0], self._board[3], self._board[6]],
+                         [self._board[1], self._board[4], self._board[7]],
+                         [self._board[2], self._board[5], self._board[8]],
+                         [self._board[0], self._board[4], self._board[8]],
+                         [self._board[2], self._board[4], self._board[6]]]
 
         for symbol in ['x', 'o']:
             for position in win_positions:
                 if all(x == symbol for x in position):
-                    winner = True
+                    self._win = True
                     break
 
-        if winner:
+        if self._win:
             # A player won
             self._done = True
-            self._win = True
             if self._turns % 2 == 1:
                 # Turns get incremented before checking for the winner, so if
                 # the turn is an odd number, then the first player won
@@ -191,7 +178,11 @@ class TicTacToeController:
                 self._player_order[1].won()
                 self._player_order[0].lost()
 
-        return winner
+        elif not self._win and self._turns > 8:
+            # Tie
+            self._done = True
+            for player in self._player_order:
+                player.draw()
 
 
 class Player:
@@ -275,7 +266,7 @@ class Player:
         """
         Increments the player's score by 1. If the player is an AI, it runs the
         AI learning algorithm.
-        :return: A message from the AI
+        :return: None
         """
         self._score += 1
         self._ai_message = self._ai.has_won() if self._mode == 1 else None
