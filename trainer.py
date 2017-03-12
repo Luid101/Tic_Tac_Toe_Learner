@@ -120,7 +120,10 @@ def get_trainer_move(board):
             if move[1] == 2:
                 next_move = move[2]
 
-    if next_move != -1:
+    # make the trainer make mistakes 1 out of 5 times
+    mistake = random.randint(1,5);
+
+    if next_move != -1 and mistake != 1:
         return next_move
 
     # loop through the board and make a random selection from all the possible moves
@@ -207,4 +210,4 @@ if __name__ == "__main__":
     # train for 1 hour
     # train_for(3600)
     # train for 30 minutes
-    train_for(25200)
+    train(5000)
