@@ -14,3 +14,6 @@ similarly, if the AI loses, the values of all the moves that have been made will
 1. Install external packages
 2. Run ttt_gui.py in Python 3
 3. Play against the AI
+
+## Check out a working online version in the link below:
+[Compete against the global AI here](http://edmondumolu.me:5850/)
