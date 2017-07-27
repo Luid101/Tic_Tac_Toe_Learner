@@ -17,3 +17,11 @@ similarly, if the AI loses, the values of all the moves that have been made will
 
 ## Check out a working online version in the link below:
 [Compete against the global AI here](http://edmondumolu.me:5850/)
+
+## Update:
+
+**Thank You to All Who Participated!**
+
+It took around **188 games** against humans to make the AI virtually **unbeatable**. It would usually take around 10,000 games against another AI trainer for the AI to get sub-par.
+
+[Here is the memory.txt file for the global AI](http://edmondumolu.me/memory.txt)
