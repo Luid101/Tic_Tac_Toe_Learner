@@ -22,6 +22,6 @@ similarly, if the AI loses, the values of all the moves that have been made will
 
 **Thank You to All Who Participated!**
 
-It took around **188 games** against humans to make the AI virtually **unbeatable**. It would usually take around 10,000 games against another AI trainer for the AI to get sub-par.
+It took around **188 games** against humans to make the AI virtually **unbeatable**. It would usually take around 10,000 games against another AI trainer for the AI to get sub-par. The memories are now updated in realtime ;).
 
-[Here is the memory.txt file for the global AI](http://edmondumolu.me/memory.txt)
+[Here is the memory.txt file for the global AI](http://www.edmondumolu.me:5851/memory.txt)
