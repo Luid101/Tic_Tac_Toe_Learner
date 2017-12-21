@@ -13,7 +13,7 @@ class AI:
         :return:
         """
         self.game_boards_current = []
-        self.game_boards_memory = dict()    # have this initialize from a file soon
+        self.game_boards_memory = dict()    
         self.file_name = "memory.txt"
 
         # check if the file exists

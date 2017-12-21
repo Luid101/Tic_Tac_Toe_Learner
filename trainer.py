@@ -4,7 +4,7 @@ import time
 import sys
 
 # constants
-TIMECONST = 't'
+TIMECONST = 's'
 NUMCONST = 'n'
 
 
@@ -211,11 +211,11 @@ def main(sys):
     Get data from arguments and use trainer.
 
     Usage:
-    pythonX trainer.py [ t | n ] [ time_in_seconds | num_in_iterations ]
+    pythonX trainer.py [ s | n ] [ time_in_seconds | num_in_iterations ]
 
     Example:
 
-    $> python trainer.py t 30
+    $> python trainer.py s 30
     Training for 30 seconds
     ...
 
