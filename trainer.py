@@ -1,6 +1,11 @@
 from AI import *
 import random
 import time
+import sys
+
+# constants
+TIMECONST = 't'
+NUMCONST = 'n'
 
 
 def train_for(duration):
@@ -201,10 +206,44 @@ def game_over(board):
     # if none of this happens, then the game is still going on
     return -1
 
+def main(sys):
+    """
+    Get data from arguments and use trainer
+    """
+
+    # get args
+    format_msg = "trainer.py [ {} | {} ] [ time_seconds | num_iterations ]".format(TIMECONST, NUMCONST)
+    num_args = len(sys.argv)
+    if num_args != 3:
+        print(format_msg)
+        return -1
+
+    train_type = sys.argv[1]
+    train_duration = int(sys.argv[2])
+
+    if train_type == TIMECONST:
+        print('Training for {} seconds'.format(train_duration))
+        
+        # train for train_duration seconds
+        train_for(train_duration)
+
+    elif train_type == NUMCONST:
+        print('Training for {} iterations'.format(train_duration))
+
+        # train for train_duration iterations
+        train(train_duration)
+
+    else:
+        print(format_msg)
+
 # test out trainer
 if __name__ == "__main__":
     # train(1)
     # train for 1 hour
     # train_for(3600)
     # train for 30 minutes
-    train(5000)
+    # train(5000)
+    main(sys)
+    
+
+
