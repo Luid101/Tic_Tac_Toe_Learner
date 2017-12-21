@@ -7,3 +7,4 @@
 *.txt
 /.idea
 /__pycache__
+.vscode
