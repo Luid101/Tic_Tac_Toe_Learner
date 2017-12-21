@@ -208,11 +208,25 @@ def game_over(board):
 
 def main(sys):
     """
-    Get data from arguments and use trainer
+    Get data from arguments and use trainer.
+
+    Usage:
+    pythonX trainer.py [ t | n ] [ time_in_seconds | num_in_iterations ]
+
+    Example:
+
+    $> python trainer.py t 30
+    Training for 30 seconds
+    ...
+
+    $> python trainer.py n 30
+    Training for 30 iterations
+    ...
+
     """
 
     # get args
-    format_msg = "trainer.py [ {} | {} ] [ time_seconds | num_iterations ]".format(TIMECONST, NUMCONST)
+    format_msg = "trainer.py [ {} | {} ] [ time_in_seconds | num_in_iterations ]".format(TIMECONST, NUMCONST)
     num_args = len(sys.argv)
     if num_args != 3:
         print(format_msg)
@@ -238,11 +252,6 @@ def main(sys):
 
 # test out trainer
 if __name__ == "__main__":
-    # train(1)
-    # train for 1 hour
-    # train_for(3600)
-    # train for 30 minutes
-    # train(5000)
     main(sys)
     
 
