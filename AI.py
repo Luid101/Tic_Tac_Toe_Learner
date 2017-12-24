@@ -48,6 +48,42 @@ class AI:
         next_moves_list = generate_next(board)
 
         # figure out the best move
+        print("Next moves:")
+        for x in next_moves_list:
+            print(x)
+        
+        # create list of [[index of board move, new board], value of move]
+        index_value_lst = [[x, self.get_board_value(x[1])] for x in next_moves_list]
+        print("\nBoard moves with values:")
+        for x in index_value_lst:
+            print(x)
+
+        # create a new list of just the weights of those moves
+        weights_list = [x[1] for x in index_value_lst]
+
+        # apply a 'positizer' to the list of weights 
+        weights_list = positize_values(weights_list)
+        print("\nPositizer representation:")
+        for x in weights_list:
+            print(x)
+
+        # apply the softmax function
+        weights_list = softmax(weights_list)
+        print("\nSoftmax representation:")
+        for x in weights_list:
+            print(x)
+
+        # randomly pick an index
+        chosen_index = weighted_choice(weights_list)
+
+        # get data from choice index
+        choice_data = index_value_lst[chosen_index]
+
+        # print data of index_value_lst
+        print("chosen index:{}, \nchosen data:{}, \nretunred data:{}\n\n".format(\
+                    chosen_index, choice_data, choice_data[0][0]))
+
+        '''
         # get a random index
         index = random.randint(0, len(next_moves_list)-1)
         best_move = next_moves_list[index]
@@ -56,13 +92,14 @@ class AI:
             # if the next move is better, it replaces the best move
             if self.get_board_value(best_move[1]) < self.get_board_value(next_move[1]):
                 best_move = next_move
+        '''
 
         # add the next move that we are going to make to a list of all boards seen so far
         # the game_boards current.
-        self.game_boards_current.append(best_move[1])
+        self.game_boards_current.append(choice_data[1])
 
         # return the index of where to play the next move
-        return best_move[0]
+        return choice_data[0][0]
 
     def get_board_value(self, board):
         """
@@ -209,129 +246,7 @@ class AI:
             s += (str(board_key) + "\n" + str(self.game_boards_memory[board_key]) + "\n")
         return s
 
-def generate_next(board):
-    """
-    Takes a board and returns a list of
-        all possible moves that can be made by the ai on that board.
-        It also includes the move needed to get to that board.
 
-    board:  a list of 9 spaces that signals a game board.
-
-    :param board: list[]
-    :return: list[list[int, board]]
-
-    # test out code
-    >>> board = [0, 0, 0, 0, 1, 0, 0, 0, 0]
-    >>> next_moves_list = generate_next(board)
-    >>> for board in next_moves_list: print(str(board[0]) + "\\n" + show_board(board[1]))
-    0
-    200
-    010
-    000
-    <BLANKLINE>
-    1
-    020
-    010
-    000
-    <BLANKLINE>
-    2
-    002
-    010
-    000
-    <BLANKLINE>
-    3
-    000
-    210
-    000
-    <BLANKLINE>
-    5
-    000
-    012
-    000
-    <BLANKLINE>
-    6
-    000
-    010
-    200
-    <BLANKLINE>
-    7
-    000
-    010
-    020
-    <BLANKLINE>
-    8
-    000
-    010
-    002
-    <BLANKLINE>
-    """
-    # store next moves here
-    next_moves_list = []
-
-    # loop through all possible moves
-    for i in range(len(board)):
-        if board[i] == 0:
-            # generate new board and add it to next_moves_list.
-            new_board = board[:]
-            new_board[i] = 2        # the ai's symbol is represented by a 2
-            next_moves_list.append([i, new_board])
-
-    return next_moves_list
-
-def show_board(board):
-    """
-    Takes a board and prints out it's status.
-
-    :param board: a list of length 9 that signifies a game board
-    :return: null
-
-    # test out the code.
-    >>> board = [0, 0, 0, 0, 1, 0, 0, 0, 0]
-    >>> show_board(board)
-    000
-    010
-    000
-    """
-    s = ""
-    # loop through the board
-    for i in range(9):
-        s += str(board[i])
-        if (((i+1) % 3) == 0) and (i != 0):
-            s += "\n"
-    return s
-
-def weighted_choice(weights):
-    """
-    Given a list of weights, it returns an index randomly, 
-    according to these weights.
-    
-    Credit: https://eli.thegreenplace.net/2010/01/22/weighted-random-generation-in-python
-    Author: (probably)Eli Bendersky
-
-    >>> weighted_choice([2, 3, 5])
-    *returns 0 with a probaility of .2*
-
-    :param weights: lst[]
-    :return: int
-    """
-    total = 0
-    winner = 0
-    for i, w in enumerate(weights):
-        total += w
-        if random.random() * total < w:
-            winner = i
-    return winner
-
-def softmax(weights):
-    """
-    Given a list of weights, makes sum of all 
-    the weights equal 1. Using the softmax function.
-
-    :param weights: lst[]
-    :return: lst[]
-    """
-    total = sum(weights)
-    return [x/total for x in weights]
     
 
 

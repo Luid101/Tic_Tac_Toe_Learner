@@ -34,6 +34,10 @@ class TestAIMethods(unittest.TestCase):
                     ([['hello', 1], ['goodbye',2]]).sort() \
                     )
         self.assertEqual(convert_to_list({}), [])
+    
+    def test_positize_values(self):
+        self.assertEqual(positize_values([-1, 1, -8]), [7, 9, 0])
+        self.assertEqual(positize_values([1, 1, 8]), [1, 1, 8])
 
 if __name__ == '__main__':
     unittest.main()
