@@ -1,5 +1,6 @@
 import unittest
 from AI import softmax
+from functions import *
 
 class TestAIMethods(unittest.TestCase):
     """
@@ -24,6 +25,15 @@ class TestAIMethods(unittest.TestCase):
         # sum of lists should sum to 1
         self.assertEqual(sum(softmax([2,3])), 1)
         self.assertEqual(sum(softmax([0.2, 0.3, 0.7])), 1)
+
+
+    def test_convert_to_lst(self):
+        # the result should be a 2d list version of the dictionary
+        self.assertEqual( \
+                    convert_to_list({'hello':1,'goodbye':2}).sort(), \
+                    ([['hello', 1], ['goodbye',2]]).sort() \
+                    )
+        self.assertEqual(convert_to_list({}), [])
 
 if __name__ == '__main__':
     unittest.main()

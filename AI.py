@@ -1,5 +1,6 @@
 import random
 import os.path
+from functions import *
 
 class AI:
     def __init__(self):
@@ -276,7 +277,6 @@ def generate_next(board):
             next_moves_list.append([i, new_board])
 
     return next_moves_list
-
 
 def show_board(board):
     """
