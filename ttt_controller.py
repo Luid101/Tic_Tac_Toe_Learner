@@ -23,6 +23,7 @@ class TicTacToeController:
         self._done = False
         self._win = False
         self._turns = 0
+        self._draws = 0
 
     def get_board(self):
         """
@@ -77,6 +78,12 @@ class TicTacToeController:
         :return: Number of turns
         """
         return self._turns
+
+    def get_draws(self):
+        """
+        :return: Number of draws
+        """
+        return self._draws
 
     def get_winner(self):
         """
@@ -183,6 +190,8 @@ class TicTacToeController:
             self._done = True
             for player in self._player_order:
                 player.draw()
+            # Increase the draw count
+            self._draws += 1
 
 
 class Player:

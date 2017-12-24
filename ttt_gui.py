@@ -60,21 +60,20 @@ class TicTacToeGUI:
                 game_over_message = pygame.font.SysFont("monospace", 15).\
                     render("Game ended in a tie", 1, (0, 0, 0))
 
-            self._display.blit(game_over_message, (665, 400))
-
+            self._display.blit(game_over_message, (665, 450))
             # Displays message from player 1 if player 1 is an AI
             if self._controller.get_player1().get_mode() == 1:
                 p1_message = pygame.font.SysFont("monospace", 15).\
                     render(self._controller.get_player1()
                            .get_ai_message(), 1, (0, 0, 0))
-                self._display.blit(p1_message, (665, 425))
+                self._display.blit(p1_message, (665, 475))
 
             # Displays message from player 2 if player 2 is an AI
             if self._controller.get_player2().get_mode() == 1:
                 p2_message = pygame.font.SysFont("monospace", 15).\
                     render(self._controller.get_player2()
                            .get_ai_message(), 1, (0, 0, 0))
-                self._display.blit(p2_message, (665, 450))
+                self._display.blit(p2_message, (665, 500))
 
     def draw_grid(self):
         """
@@ -110,6 +109,14 @@ class TicTacToeGUI:
             render(str(player2.get_score()), 1, (0, 0, 0))
         self._display.blit(player_2_label, (680, 200))
         self._display.blit(player_2_score, (900, 200))
+
+        # draw the number of draws
+        draws_label = pygame.font.SysFont("monospace", 40).\
+            render("Draws", 1, (0, 0, 0))
+        draws_amount = pygame.font.SysFont("monospace", 40).\
+            render(str(controller.get_draws()), 1, (0, 0, 0))
+        self._display.blit(draws_label, (680, 360))
+        self._display.blit(draws_amount, (900, 360))
 
         if player1 == player_order[0]:
             # Player 1 is x, Player 2 is o
