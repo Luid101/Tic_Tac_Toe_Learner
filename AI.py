@@ -17,6 +17,16 @@ class AI:
         self.game_boards_memory = dict()    
         self.file_name = "memory.txt"
 
+        # Certainty + randomness must be >= 1
+
+        # a level of how random the ai behaves
+        # 0 => not random at all
+        self.randomness = 1
+
+        # a level of how certain the ai behaves
+        # 0 => not certain at all
+        self.certainty = 10
+
         # check if the file exists
         if os.path.isfile(self.file_name):
             self.load()
@@ -46,32 +56,39 @@ class AI:
 
         # generate all possible next moves
         next_moves_list = generate_next(board)
-
+        '''
         # figure out the best move
         print("Next moves:")
         for x in next_moves_list:
             print(x)
+        '''
         
         # create list of [[index of board move, new board], value of move]
         index_value_lst = [[x, self.get_board_value(x[1])] for x in next_moves_list]
+        '''
         print("\nBoard moves with values:")
         for x in index_value_lst:
             print(x)
+        '''
 
         # create a new list of just the weights of those moves
         weights_list = [x[1] for x in index_value_lst]
 
         # apply a 'positizer' to the list of weights 
         weights_list = positize_values(weights_list)
+        '''
         print("\nPositizer representation:")
         for x in weights_list:
             print(x)
+        '''
 
         # apply the softmax function
         weights_list = softmax(weights_list)
+        '''
         print("\nSoftmax representation:")
         for x in weights_list:
             print(x)
+        '''
 
         # randomly pick an index
         chosen_index = weighted_choice(weights_list)
@@ -79,11 +96,12 @@ class AI:
         # get data from choice index
         choice_data = index_value_lst[chosen_index]
 
+        '''
         # print data of index_value_lst
         print("chosen index:{}, \nchosen data:{}, \nretunred data:{}\n\n".format(\
                     chosen_index, choice_data, choice_data[0][0]))
-
         '''
+
         # get a random index
         index = random.randint(0, len(next_moves_list)-1)
         best_move = next_moves_list[index]
@@ -92,6 +110,30 @@ class AI:
             # if the next move is better, it replaces the best move
             if self.get_board_value(best_move[1]) < self.get_board_value(next_move[1]):
                 best_move = next_move
+        
+        # factor in how much randomness the ai has
+        randomness = self.randomness
+        picks = []
+        while randomness != 0:
+            picks.append(0)
+            randomness -= 1
+        # factor in how certain the ai is
+        centanty = self.certainty
+        while centanty != 0:
+            picks.append(1)
+            centanty -= 1
+        
+        # decide if or not to use the weighted choice
+        decision = random.choice(picks)
+        
+        if decision == 1:
+            # don't use the weighted choice
+            self.game_boards_current.append(best_move[1])
+            print("chose certainly")
+            return best_move[0]
+        
+        '''
+        print("chose randomly")
         '''
 
         # add the next move that we are going to make to a list of all boards seen so far
@@ -128,13 +170,13 @@ class AI:
         return value
 
     def has_lost(self):
-        return self.remember_boards(-2)
+        return self.remember_boards(-100)
 
     def has_drawn(self):
         return self.remember_boards(1)
 
     def has_won(self):
-        return self.remember_boards(2)
+        return self.remember_boards(100)
 
     def remember_boards(self, multiplier):
         """
