@@ -21,7 +21,7 @@ class TestAIMethods(unittest.TestCase):
     """
     
     def test_reflect_board(self):
-        self.assertEquals( reflect_board([1, 0, 2, 1, 0]), [2, 0, 1, 2, 0])
+        self.assertEqual( reflect_board([1, 0, 2, 1, 0]), [2, 0, 1, 2, 0] )
 
 if __name__ == '__main__':
     unittest.main()

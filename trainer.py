@@ -51,6 +51,7 @@ def train(num, vs_ai=True):
     past_turn = turn
 
     # get other ai if needed
+    ai_trainer = None
     if vs_ai:
         ai_trainer = AI()
 
@@ -67,10 +68,19 @@ def train(num, vs_ai=True):
         while game_over(board) == -1:
             # if it is the trainers turn
             if turn:
-                index = get_trainer_move(board)
+                # get move from other ai or trainer
+                index = 0
+                if vs_ai:
+                    reflected_board = reflect_board(board)
+                    index = ai_trainer.move(reflected_board)
+                    print("Trainer AI played in :", index)
+                else:
+                    index = get_trainer_move(board)
+                    print("Trainer played in :", index)
+                
                 board[index] = 1
                 turn = not turn
-                print("Trainer played in :", index)
+                
                 print(show_board(board))
 
             # if it is the ai's turn
@@ -87,15 +97,27 @@ def train(num, vs_ai=True):
             ai.has_lost()
             trainer_wins += 1
 
+            # notify the ai trainer if needed
+            if vs_ai:
+                ai_trainer.has_won()
+
         elif game_over(board) == 2:
             print("AI won!")
             ai.has_won()
             ai_wins += 1
 
+            # notify the ai trainer if needed
+            if vs_ai:
+                ai_trainer.has_lost()
+
         elif game_over(board) == 0:
             print("it was a draw!")
             ai.has_drawn()
             draws += 1
+
+            # notify the ai trainer if needed
+            if vs_ai:
+                ai_trainer.has_drawn()
 
         # print out stats
         print("Score[ Trainer : " + str(trainer_wins) + ", AI : " + str(ai_wins) + ", Draws: " + str(draws) + " ]\n")

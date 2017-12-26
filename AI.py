@@ -96,7 +96,7 @@ class AI:
         return self.remember_boards(1)
 
     def has_won(self):
-        return self.remember_boards(2)
+        return self.remember_boards(100)
 
     def remember_boards(self, multiplier):
         """
@@ -157,7 +157,7 @@ class AI:
         self.game_boards_current = []
         s = "Moves learned: " + str(added) + ", Moves modified: " + str(changed)
 
-        # save stuff that is remembered into a my
+        # save stuff that is remembered into my memory file
         self.save()
         return s
 
