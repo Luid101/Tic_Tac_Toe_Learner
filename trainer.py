@@ -35,18 +35,24 @@ def train_for(duration):
     print("Score[ Trainer : " + str(trainer_wins) + ", AI : " + str(ai_wins) + ", Draws: " + str(draws) + " ]\n")
 
 
-def train(num):
+def train(num, vs_ai=True):
     """
-    Train the ai num times, using the default ai trainer
-    :param ai:
-    :param num:
-    :return:
+    Train the ai num times, using the default ai trainer.
+    Or using the ai itself if needed.
+
+    :param num: int
+    :param vs_ai: boolean
+    :return: lst[]
     """
 
     board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     turn = True
     ai = AI()
     past_turn = turn
+
+    # get other ai if needed
+    if vs_ai:
+        ai_trainer = AI()
 
     # get some stats
     trainer_wins = 0
@@ -101,11 +107,32 @@ def train(num):
 
     return [trainer_wins, ai_wins, draws]
 
+def reflect_board(board):
+    """
+    Given a board with 1's and 2's
+    make all the 1's into 2's and 2's
+    into ones.
 
-def get_trainer_move(board):
+    :board: lst[]
+    :return: lst[]
+    """
+    
+    new_board = []
+    for number in board:
+        if number == 1:
+            new_board.append(2)
+        elif number == 2:
+            new_board.append(1)
+        else:
+            new_board.append(0)
+
+    return new_board
+
+def get_trainer_move(board, error=5):
     """
     get move from trainer.
     the trainer see's itself as 1.
+
     :param board:
     :return:
     """
@@ -125,7 +152,10 @@ def get_trainer_move(board):
             if move[1] == 2:
                 next_move = move[2]
 
-    if next_move != -1:
+    # make the trainer make mistakes 1 out of error(default 5 times)
+    mistake = random.randint(1, error)
+
+    if next_move != -1 and mistake != 1:
         return next_move
 
     # loop through the board and make a random selection from all the possible moves

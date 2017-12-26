@@ -10,3 +10,4 @@
 .vscode
 nnr.pkl
 AI.pyc
+*.pkl
