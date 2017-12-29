@@ -35,7 +35,7 @@ def train_for(duration):
     print("Score[ Trainer : " + str(trainer_wins) + ", AI : " + str(ai_wins) + ", Draws: " + str(draws) + " ]\n")
 
 
-def train(num, vs_ai=True):
+def train(num, vs_ai=False):
     """
     Train the ai num times, using the default ai trainer.
     Or using the ai itself if needed.
