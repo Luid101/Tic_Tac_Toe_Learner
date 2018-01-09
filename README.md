@@ -15,6 +15,9 @@ similarly, if the AI loses, the values of all the moves that have been made will
 2. Run ttt_gui.py in Python 3
 3. Play against the AI
 
+### Get a strong AI
+If you want to start the AI out strong, copy and paste [this memory file](http://www.edmondumolu.me:5851/memory.txt) into the project directory. The AI will automatically load it in on start. Enjoy!
+
 ## Check out a working online version in the link below:
 [Compete against the global AI here](http://edmondumolu.me:5850/)
 
