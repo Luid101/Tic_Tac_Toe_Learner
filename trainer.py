@@ -3,10 +3,94 @@ import random
 import time
 import sys
 
+from statistics import mean
+
+# graphing imports
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
 # constants
 TIMECONST = 's'
 NUMCONST = 'n'
+MAINCONT = 'm'
 
+def train_main():
+    """
+    test out the train test function
+    """
+    
+    ai1 = AI()
+    wins_ai1, wins_ai2, draws_all = train_test(100, 100, 500, ai1)
+    
+    # plot a1 wins
+    plt.clf()
+    plt.plot(wins_ai1, c='r')
+    plt.plot(wins_ai2, c='b')
+    plt.plot(draws_all, c='g')
+    
+    # add legends
+    red_patch = mpatches.Patch(color='red', label='AI_1 wins')
+    blue_patch = mpatches.Patch(color='blue', label='AI_2 wins')
+    green_patch = mpatches.Patch(color='green', label='Draws')
+    plt.legend(handles=[red_patch, blue_patch, green_patch])
+    
+    # print average values:
+    print("Average AI_1 wins: {}%".format( mean(wins_ai1) ))
+    print("Average AI_2/Trainer wins: {}%".format( mean(wins_ai2) ))
+    print("Average draws: {}%".format( mean(draws_all) ))
+
+
+    
+
+def train_test(train_iter, test_iter, num_rounds, ai1, ai2=None):
+    """
+    Pits ai1 against ai2.
+    Allows them to train and improve for the first train_iter games,
+    then test them against each other for the next test_iter games,
+    returns the win, loss and draw percentage. 
+    
+    Then repeats the above steps num_rounds times.
+    
+    Returns back a list with all the percentage wins, losses and draws of the 
+    num_rounds tests for both ai1 and ai2.
+    
+    :param train_iter:  num of iterations to train for
+    :param test_iter:   num of iterations to test for
+    :param num_rounds:  num of rounds to do the train,test process
+    :param ai1:  the ai to train/test
+    :param ai2:  the second ai to train/test or the ai trainer
+    :return:  [wins_ai_1, wins_ai_2, draws_all]
+    """
+    
+    # compile data of percentages, the will be appended to the below lists
+    wins_ai_1 = []
+    wins_ai_2 = []
+    draws_all = []
+    
+    # do the whole process num_rounds times
+    for rnd in range(num_rounds):
+         
+        # train them for the first train_iter games
+        # tell ai's to start learning
+        ai1.start_learning()
+        if ai2:
+            ai2.start_learning()
+        train(train_iter, ai1, ai2)
+        
+        # test them for the next test_iter games
+        # tell ai's to stop learning
+        ai1.stop_learning()
+        if ai2:
+            ai2.stop_learning()
+            
+        ai2_wins, ai1_wins, draws = train(test_iter, ai1, ai2)
+        
+        wins_ai_1.append(ai1_wins/test_iter*100)
+        wins_ai_2.append(ai2_wins/test_iter*100)
+        draws_all.append(draws/test_iter*100)
+    
+    return [wins_ai_1, wins_ai_2, draws_all]
+            
 
 def train_for(duration):
     """
@@ -35,10 +119,10 @@ def train_for(duration):
     print("Score[ Trainer : " + str(trainer_wins) + ", AI : " + str(ai_wins) + ", Draws: " + str(draws) + " ]\n")
 
 
-def train(num, vs_ai=False):
+def train(num, ai1=None,vs_ai=None):
     """
     Train the ai num times, using the default ai trainer.
-    Or using the ai itself if needed.
+    Or using another ai if desired.
 
     :param num: int
     :param vs_ai: boolean
@@ -47,13 +131,17 @@ def train(num, vs_ai=False):
 
     board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     turn = True
+    
     ai = AI()
+    if ai1 == None:
+        ai = ai1
+        
     past_turn = turn
 
     # get other ai if needed
     ai_trainer = None
-    if vs_ai:
-        ai_trainer = AI()
+    if vs_ai != None:
+        ai_trainer = vs_ai
 
     # get some stats
     trainer_wins = 0
@@ -263,7 +351,7 @@ def main(sys):
     Get data from arguments and use trainer.
 
     Usage:
-    pythonX trainer.py [ s | n ] [ time_in_seconds | num_in_iterations ]
+    pythonX trainer.py [ s | n | m ] [ time_in_seconds | num_in_iterations ]
 
     Example:
 
@@ -278,8 +366,16 @@ def main(sys):
     """
 
     # get args
-    format_msg = "trainer.py [ {} | {} ] [ time_in_seconds | num_in_iterations ]".format(TIMECONST, NUMCONST)
+    format_msg = "trainer.py [ s/n/m ] [ time_in_seconds | num_in_iterations ]".format(TIMECONST, NUMCONST)
     num_args = len(sys.argv)
+    
+    # treat m seperately
+    if num_args == 2:
+        train_type = sys.argv[1]
+        if train_type == MAINCONT:
+            train_main()
+            return 
+    
     if num_args != 3:
         print(format_msg)
         return -1
@@ -298,13 +394,13 @@ def main(sys):
 
         # train for train_duration iterations
         train(train_duration)
-
+        
     else:
         print(format_msg)
 
 # test out trainer
 if __name__ == "__main__":
-    main(sys)
-    
+    #main(sys)
+    train_main()    
 
 

@@ -3,7 +3,8 @@ import os.path
 from functions import *
 
 class AI:
-    def __init__(self):
+    def __init__(self, fname="memory", win_lrate=1000, loss_lrate=-2, \
+                 draw_lrate=1, randomness=1, certainty=10):
         """
         This initialises a new ai with a:
         1) game_boards list to store
@@ -13,19 +14,27 @@ class AI:
             in a dictionary.
         :return:
         """
+        
+        # allow the AI the ability to not learn
+        self.is_learning = True
+        self.win_lrate = win_lrate
+        self.loss_lrate = loss_lrate
+        self.draw_lrate = draw_lrate
+        self.not_learning_msg = "Not learning rn"
+        
         self.game_boards_current = []
         self.game_boards_memory = dict()    
-        self.file_name = "memory.txt"
+        self.file_name = fname + ".txt"
 
         # Certainty + randomness must be >= 1
 
         # a level of how random the ai behaves
         # 0 => not random at all
-        self.randomness = 1
+        self.randomness = randomness
 
         # a level of how certain the ai behaves
         # 0 => not certain at all
-        self.certainty = 10
+        self.certainty = certainty
 
         # check if the file exists
         if os.path.isfile(self.file_name):
@@ -138,7 +147,7 @@ class AI:
 
         # add the next move that we are going to make to a list of all boards seen so far
         # the game_boards current.
-        self.game_boards_current.append(choice_data[1])
+        self.game_boards_current.append(choice_data[0][1])
 
         # return the index of where to play the next move
         return choice_data[0][0]
@@ -170,13 +179,28 @@ class AI:
         return value
 
     def has_lost(self):
-        return self.remember_boards(-2)
+        if self.is_learning:
+            return self.remember_boards(self.loss_lrate)
+        return self.not_learning_msg
 
     def has_drawn(self):
-        return self.remember_boards(1)
+        if self.is_learning:
+            return self.remember_boards(self.draw_lrate)
+        return self.not_learning_msg
 
     def has_won(self):
-        return self.remember_boards(1000)
+        if self.is_learning:
+            return self.remember_boards(self.win_lrate)
+        return self.not_learning_msg
+        
+    def stop_learning(self):
+        self.is_learning = False
+        print("Stopped learning")
+        
+    def start_learning(self):
+        self.is_learning = True
+        print("Started learning")
+        
 
     def remember_boards(self, multiplier):
         """
@@ -232,9 +256,6 @@ class AI:
                 self.game_boards_memory[board_key] = value
                 added += 1
             
-            # debug mem file contaminator
-            print("Key:{}, Data:{}".format(board, self.game_boards_memory[board_key]))
-
         # after the loop,
         # now clear out the list of boards for the current game
         self.game_boards_current = []
