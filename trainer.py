@@ -66,10 +66,16 @@ def train_test(train_iter, test_iter, num_rounds, ai1, ai2=None):
     wins_ai_1 = []
     wins_ai_2 = []
     draws_all = []
+
+    # stop saving to make training faster
+    ai1.stop_self_saving()
+    if ai2:
+        ai2.stop_self_saving()
+    #print("self_save: {}".format(ai1.self_save))
     
     # do the whole process num_rounds times
     for rnd in range(num_rounds):
-         
+        
         # train them for the first train_iter games
         # tell ai's to start learning
         ai1.start_learning()
@@ -88,6 +94,13 @@ def train_test(train_iter, test_iter, num_rounds, ai1, ai2=None):
         wins_ai_1.append(ai1_wins/test_iter*100)
         wins_ai_2.append(ai2_wins/test_iter*100)
         draws_all.append(draws/test_iter*100)
+    
+    # start saving again
+    ai1.start_self_saving()
+    ai1.save()
+    if ai2:
+        ai2.start_self_saving()
+        ai2.save() 
     
     return [wins_ai_1, wins_ai_2, draws_all]
             
@@ -132,9 +145,10 @@ def train(num, ai1=None,vs_ai=None):
     board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     turn = True
     
-    ai = AI()
-    if ai1 == None:
+    if ai1 != None:
         ai = ai1
+    else:
+        ai = AI()
         
     past_turn = turn
 
@@ -150,6 +164,7 @@ def train(num, ai1=None,vs_ai=None):
 
     # for times given
     for times in range(num):
+        
         turn = past_turn
 
         # while the game is not over
