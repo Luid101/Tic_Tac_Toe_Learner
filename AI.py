@@ -1,6 +1,5 @@
 import random
 import os.path
-import sys
 
 class AI:
     def __init__(self):
