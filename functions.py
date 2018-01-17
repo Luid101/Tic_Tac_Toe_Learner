@@ -1,56 +1,7 @@
 """
 This file contains all the status functions used by AI.py
 """
-
 import random
-
-def positize_values(values):
-    """
-    Given a list of values, move them all to 
-    the positive range. keeping the original
-    relationship between them.
-
-    :param values: lst[]
-    :return: lst[]
-    """
-
-    min_val = min(values)
-    if min_val < 0:
-        new_vals = []
-        for value in values:
-            new_vals.append(value + abs(min_val))
-        return new_vals
-    else:
-        return values
-
-def convert_to_list(dictionary):
-    """
-    Takes a dictionary and converts it to 
-    a 2d list with key in index 0 and value
-    in index 1.
-
-    :param dictionary: any dictionary
-    :return: lst[lst[]]
-    """
-
-    lst = []
-    for key in dictionary:
-        lst.append([key, dictionary[key]])
-
-    return lst 
-
-def softmax(weights):
-    """
-    Given a list of weights, makes sum of all 
-    the weights equal 1. Using the softmax function.
-
-    :param weights: lst[]
-    :return: lst[]
-    """
-    total = sum(weights)
-    if total == 0: 
-        return [1/len(weights) for x in weights]
-    return [x/total for x in weights]
 
 def weighted_choice(weights):
     """
