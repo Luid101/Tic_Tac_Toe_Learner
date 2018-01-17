@@ -16,7 +16,9 @@ MAINCONT = 'm'
 
 def train_main():
     """
-    test out the train test function
+    Test and train the AI using test_train(...)
+    
+    :return: None
     """
     
     ai1 = AI()

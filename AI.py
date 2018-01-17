@@ -12,12 +12,14 @@ class AI:
             in a dictionary.
         :return:
         """
+        
         self.self_save = True
         self.is_learning = True
         self.game_boards_current = []
         self.game_boards_memory = dict()    
         self.file_name = "memory.txt"
         self.previous_state = None
+        
         # check if the file exists
         if os.path.isfile(self.file_name):
             self.load()
@@ -63,19 +65,19 @@ class AI:
         self.game_boards_current.append(best_move[1])
         self.backtrack(self.get_board_value(best_move[1]))
         self.previous_state = best_move[1]
+
         # return the index of where to play the next move
         return best_move[0]
 
     def backtrack(self,current_move_value):
         if self.is_learning:
             if self.previous_state != None:
+                # the below line of code is key
                 self.game_boards_memory[str(self.previous_state)] +=  0.99*(current_move_value-self.game_boards_memory[str(self.previous_state)])
-                
+            
+            # optimizies training time
             if self.self_save:
-                print("here: {}".format(self.self_save))
                 self.save()
-            else:
-                print("No save")
                 
     def get_board_value(self, board):
         """
@@ -135,6 +137,9 @@ class AI:
         self.self_save = True
         print("Started self saving")
 
+    '''
+    This is now legacy code...
+    
     def remember_boards(self, multiplier):
         """
         Takes all the boards in boards current,
@@ -197,6 +202,7 @@ class AI:
         # save stuff that is remembered into a my
         self.save()
         return s
+    '''
 
     def save(self):
         """
@@ -205,8 +211,6 @@ class AI:
         :param file_name: str
         :return: number of entries saved
         """
-        
-        print("Saving")
         
         file_name = self.file_name
         entries = 0
