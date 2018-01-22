@@ -22,7 +22,7 @@ def train_main():
     """
     
     ai1 = AI()
-    wins_ai1, wins_ai2, draws_all = train_test(100, 100, 500, ai1)
+    wins_ai1, wins_ai2, draws_all = train_test(100, 100, 50, ai1)
     
     # plot a1 wins
     plt.clf()

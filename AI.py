@@ -1,6 +1,6 @@
 import random
 import os.path
-from functions import generate_next
+from functions import generate_next, show_board, weighted_choice
 
 class AI:
     def __init__(self):
@@ -20,6 +20,14 @@ class AI:
         self.game_boards_memory = dict()    
         self.file_name = "memory.txt"
         self.previous_state = None
+        
+        self.randomness = 1
+        self.certainty = 1000
+        
+        self.RAND = 0
+        self.CERT = 1
+        
+        self.rand_choice_lst = ([self.RAND]*self.randomness) + ([self.CERT]*self.certainty) 
         
         # check if the file exists
         if os.path.isfile(self.file_name):
@@ -56,16 +64,33 @@ class AI:
         index = random.randint(0, len(next_moves_list)-1)
         best_move = next_moves_list[index]
 
-        for next_move in next_moves_list:
-            # if the next move is better, it replaces the best move
-            if self.get_board_value(best_move[1]) < self.get_board_value(next_move[1]):
-                best_move = next_move
+        # decide if or not to choose randomly
+        pick = random.choice(self.rand_choice_lst)
+        if pick == self.CERT:
+            print("chose certainly")
+            for next_move in next_moves_list:
+                # if the next move is better, it replaces the best move
+                if self.get_board_value(best_move[1]) < self.get_board_value(next_move[1]):
+                    best_move = next_move
+        else:
+            print("chose randomly")
+            # map boards to values
+            values = []
+            for board in next_moves_list:
+                values.append(self.get_board_value(board[1]))
+            best_move_index = weighted_choice(values)
+            best_move = next_moves_list[best_move_index]
+            
 
         # add the next move that we are going to make to a list of all boards seen so far
         # the game_boards current.
         self.game_boards_current.append(best_move[1])
         self.backtrack(self.get_board_value(best_move[1]))
         self.previous_state = best_move[1]
+
+        # debug
+        print(show_board(best_move[1]))
+        print("val:{}\n".format(self.get_board_value(best_move[1])))
 
         # return the index of where to play the next move
         return best_move[0]
@@ -74,8 +99,8 @@ class AI:
         if self.is_learning:
             if self.previous_state != None:
                 # the below line of code is key
-                self.game_boards_memory[str(self.previous_state)] +=  0.99*(current_move_value-self.game_boards_memory[str(self.previous_state)])
-            
+                self.game_boards_memory[str(self.previous_state)] += 0.99*(current_move_value-self.game_boards_memory[str(self.previous_state)])
+        
             # optimizies training time
             if self.self_save:
                 self.save()
