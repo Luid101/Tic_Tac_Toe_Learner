@@ -68,10 +68,16 @@ class AI:
         pick = random.choice(self.rand_choice_lst)
         if pick == self.CERT:
             print("chose certainly")
+            
+            #####
+            
             for next_move in next_moves_list:
                 # if the next move is better, it replaces the best move
                 if self.get_board_value(best_move[1]) < self.get_board_value(next_move[1]):
                     best_move = next_move
+                    
+            ####
+            
         else:
             print("chose randomly")
             # map boards to values
@@ -85,6 +91,7 @@ class AI:
         # add the next move that we are going to make to a list of all boards seen so far
         # the game_boards current.
         self.game_boards_current.append(best_move[1])
+       
         self.backtrack(self.get_board_value(best_move[1]))
         self.previous_state = best_move[1]
 
@@ -99,11 +106,18 @@ class AI:
         if self.is_learning:
             if self.previous_state != None:
                 # the below line of code is key
-                self.game_boards_memory[str(self.previous_state)] += 0.99*(current_move_value-self.game_boards_memory[str(self.previous_state)])
-        
+                self.learn_algorithm(current_move_value)
+                
             # optimizies training time
             if self.self_save:
                 self.save()
+                
+    def learn_algorithm(self, current_move_value):
+        """
+        This 
+        """
+        self.game_boards_memory[str(self.previous_state)] += 0.99*(current_move_value-self.game_boards_memory[str(self.previous_state)])
+        
                 
     def get_board_value(self, board):
         """
