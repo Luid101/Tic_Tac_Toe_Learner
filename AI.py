@@ -1,6 +1,5 @@
 import random
 import os.path
-from functions import generate_next, show_board, weighted_choice
 
 class AI:
     def __init__(self):
@@ -19,7 +18,7 @@ class AI:
         self.game_boards_current = []
         self.game_boards_memory = dict()    
         self.file_name = "memory.txt"
-        self.previous_state = None
+        self.current_state = None
         
         self.randomness = 1
         self.certainty = 1000
@@ -27,7 +26,8 @@ class AI:
         self.RAND = 0
         self.CERT = 1
         
-        self.rand_choice_lst = ([self.RAND]*self.randomness) + ([self.CERT]*self.certainty) 
+        self.rand_choice_lst = ([self.RAND]*self.randomness) + \
+                                                 ([self.CERT]*self.certainty) 
         
         # check if the file exists
         if os.path.isfile(self.file_name):
@@ -62,10 +62,14 @@ class AI:
         # figure out the best move
         # get a random index
         index = random.randint(0, len(next_moves_list)-1)
+        # best_move is a list that looks like:
+        # [index_to_play_to_get to that move, the_actual_board_of_next_move]
         best_move = next_moves_list[index]
 
         # decide if or not to choose randomly
         pick = random.choice(self.rand_choice_lst)
+        
+        # AI chose without random
         if pick == self.CERT:
             print("chose certainly")
             
@@ -80,20 +84,16 @@ class AI:
             
         else:
             print("chose randomly")
-            # map boards to values
-            values = []
-            for board in next_moves_list:
-                values.append(self.get_board_value(board[1]))
-            best_move_index = weighted_choice(values)
-            best_move = next_moves_list[best_move_index]
             
 
         # add the next move that we are going to make to a list of all boards seen so far
         # the game_boards current.
         self.game_boards_current.append(best_move[1])
        
+        # update the current board state with the value of
+        # new move chosen
         self.backtrack(self.get_board_value(best_move[1]))
-        self.previous_state = best_move[1]
+        self.current_state = best_move[1]
 
         # debug
         print(show_board(best_move[1]))
@@ -102,22 +102,28 @@ class AI:
         # return the index of where to play the next move
         return best_move[0]
 
-    def backtrack(self,current_move_value):
+    def backtrack(self,future_move_value):
         if self.is_learning:
-            if self.previous_state != None:
+            if self.current_state != None:
                 # the below line of code is key
-                self.learn_algorithm(current_move_value)
+                # update the current board's state with the value
+                # of the future move.
+                
+                # What you might want to think about...
+                # the value of a board is kept in dictionary self.game_boards_memory[]
+                # the string of the board is used as a key to index that dictionary
+                # "future_move_value" is a numeric value of the future move 
+                # "current_state" is an array that represent the boards current state.
+                
+                #####
+                
+                self.game_boards_memory[str(self.current_state)] += 0.99*(future_move_value-self.get_board_value(self.current_state))
+                
+                #####
                 
             # optimizies training time
             if self.self_save:
                 self.save()
-                
-    def learn_algorithm(self, current_move_value):
-        """
-        This 
-        """
-        self.game_boards_memory[str(self.previous_state)] += 0.99*(current_move_value-self.game_boards_memory[str(self.previous_state)])
-        
                 
     def get_board_value(self, board):
         """
@@ -148,18 +154,15 @@ class AI:
 
     def has_lost(self):
         self.backtrack(0)
-        self.previous_state = None
-        ##return self.remember_boards(-1)
+        self.current_state = None
 
     def has_drawn(self):
         self.backtrack(0.5)
-        self.previous_state = None
-        #return self.remember_boards(-0.5)
+        self.current_state = None
 
     def has_won(self):
         self.backtrack(1)
-        self.previous_state = None
-        ##return self.remember_boards(1)
+        self.current_state = None
     
     def stop_learning(self):
         self.is_learning = False
@@ -176,73 +179,6 @@ class AI:
     def start_self_saving(self):
         self.self_save = True
         print("Started self saving")
-
-    '''
-    This is now legacy code...
-    
-    def remember_boards(self, multiplier):
-        """
-        Takes all the boards in boards current,
-            multiplies their index by multiplier to get new_value,
-            and if board already exists, it add's value to the value under that board key,
-            if not, then it creates a new key that points to value.
-        :param multiplier:
-        :return: [number of entries added, number of entries changed]
-
-        test that this code works
-        >>> ai = AI()
-        >>> board = [0,1,0,0]
-        >>> 0 <= ai.move(board) <= len(board)
-        True
-        >>> board2 = [0,0,1,0]
-        >>> 0 <= ai.move(board2) <= len(board2)
-        True
-        >>> print(ai.has_won())
-        Learned 2 new boards, And changed how I look at 0 boards
-        <BLANKLINE>
-        >>> s = 0
-        >>> for board in ai.game_boards_memory: s += ai.game_boards_memory[board]
-        >>> s
-        1
-        >>> board3 = [1,0,0,0]
-        >>> 0 <= ai.move(board3) <= len(board3)
-        True
-        >>> board4 = [1,2,0,0]
-        >>> board4_lost = ai.move(board4)
-        >>> print(ai.has_lost())
-        Learned 2 new boards, And changed how I look at 0 boards
-        <BLANKLINE>
-        >>> new_board = ai.move(board4)
-        >>> str(new_board) == str(board4_lost)
-        False
-        """
-        # info data about what the computer is learning
-        changed = 0
-        added = 0
-
-        for board in self.game_boards_current:
-            value = multiplier * self.game_boards_current.index(board)
-
-            # check if that item is in the dictionary.
-            # if it is, add value to it,
-            # if not, create a new key with the board and make it point to value.
-            board_key = str(board)
-            if board_key in self.game_boards_memory:
-                self.game_boards_memory[board_key] += value
-                changed += 1
-            else:
-                self.game_boards_memory[board_key] = value
-                added += 1
-
-        # after the loop,
-        # now clear out the list of boards for the current game
-        self.game_boards_current = []
-        s = "Moves learned: " + str(added) + ", Moves modified: " + str(changed)
-
-        # save stuff that is remembered into a my
-        self.save()
-        return s
-    '''
 
     def save(self):
         """
@@ -293,5 +229,103 @@ class AI:
         return s
 
 
+def generate_next(board):
+    """
+    Takes a board and returns a list of
+        all possible moves that can be made by the ai on that board.
+        It also includes the move needed to get to that board.
+        
+        The AI, see's its own moves on the board as 2's , other people's
+        moves on the board as 1's and no moves on the board as 0's.
+
+    board:  a list of 9 spaces that signals a game board.
+
+    :param board: list[]
+    :return: list[list[int(index of position to play), board]]
+
+    # test out code
+    >>> board = [0, 0, 0, 0, 1, 0, 0, 0, 0]
+    >>> next_moves_list = generate_next(board)
+    >>> for board in next_moves_list: print(str(board[0]) + "\\n" + show_board(board[1]))
+    0
+    200
+    010
+    000
+    <BLANKLINE>
+    1
+    020
+    010
+    000
+    <BLANKLINE>
+    2
+    002
+    010
+    000
+    <BLANKLINE>
+    3
+    000
+    210
+    000
+    <BLANKLINE>
+    5
+    000
+    012
+    000
+    <BLANKLINE>
+    6
+    000
+    010
+    200
+    <BLANKLINE>
+    7
+    000
+    010
+    020
+    <BLANKLINE>
+    8
+    000
+    010
+    002
+    <BLANKLINE>
+    """
+    
+    #######
+    
+    # store next moves here
+    next_moves_list = []
+
+    # loop through all possible moves
+    for i in range(len(board)):
+        if board[i] == 0:
+            # generate new board and add it to next_moves_list.
+            new_board = board[:]
+            new_board[i] = 2        # the ai's symbol is represented by a 2
+            next_moves_list.append([i, new_board])
+
+    return next_moves_list
+
+    ########
+    
+def show_board(board):
+    """
+    Takes a board and prints out it's status.
+
+    :param board: a list of length 9 that signifies a game board
+    :return: null
+
+    # test out the code.
+    >>> board = [0, 0, 0, 0, 1, 0, 0, 0, 0]
+    >>> show_board(board)
+    000
+    010
+    000
+    """
+    s = ""
+    # loop through the board
+    for i in range(9):
+        s += str(board[i])
+        if (((i+1) % 3) == 0) and (i != 0):
+            s += "\n"
+    return s
 
 

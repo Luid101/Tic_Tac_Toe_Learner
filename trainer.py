@@ -29,6 +29,9 @@ def train_main():
     plt.plot(wins_ai1, c='r')
     plt.plot(wins_ai2, c='b')
     plt.plot(draws_all, c='g')
+    axis = plt.gca()
+    axis.set_xlabel("Number of Iterations")
+    axis.set_ylabel("Percantage of wins")
     
     # add legends
     red_patch = mpatches.Patch(color='red', label='AI_1 wins')
