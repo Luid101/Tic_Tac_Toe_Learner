@@ -1,5 +1,6 @@
 import random
 import os.path
+import pathlib
 
 class AI:
     def __init__(self):
